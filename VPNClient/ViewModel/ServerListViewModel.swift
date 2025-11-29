@@ -18,6 +18,13 @@ public class ServerListViewModel: ObservableObject {
     @Published var isConnecting = false
     @Published var serverPings: [String: Int?] = [:] // Server ID -> Ping in ms
     @Published var searchText: String = ""
+    @Published var isNetworkAvailable: Bool = true // Track network availability
+    
+    // Connection timeout tracking
+    private var connectionTimeoutTimer: Timer?
+    private var timeoutCount: Int = 0
+    private let maxTimeoutCount = 3 // Number of timeouts before failing
+    private let connectionTimeoutSeconds: TimeInterval = 30 // Max time to wait for connection
     
     /// Filtered servers based on search text
     var filteredServers: [VPNServer] {
@@ -78,6 +85,15 @@ public class ServerListViewModel: ObservableObject {
         // Observe connection status changes
         observeConnectionStatus()
         
+        // Observe network disconnect notification
+        observeNetworkDisconnect()
+        
+        // Observe network status changes for UI updates
+        observeNetworkStatus()
+        
+        // Set initial network status
+        isNetworkAvailable = NetworkMonitor.isCurrentlyConnected
+        
         // NOTE: Ping service disabled to reduce memory usage
         // Uncomment below to enable ping measurement
         // startPingingServers()
@@ -86,6 +102,167 @@ public class ServerListViewModel: ObservableObject {
     deinit {
         // Clean up subscriptions
         cancellables.removeAll()
+        // Cancel timeout timer
+        connectionTimeoutTimer?.invalidate()
+        // Remove notification observers
+        NotificationCenter.default.removeObserver(self, name: .networkLostDisconnectVPN, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .networkStatusChanged, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .retryConnection, object: nil)
+    }
+    
+    /// Observe network disconnect notification to auto-disconnect VPN
+    private func observeNetworkDisconnect() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNetworkLost),
+            name: .networkLostDisconnectVPN,
+            object: nil
+        )
+    }
+    
+    /// Handle network lost - disconnect VPN automatically
+    @objc private func handleNetworkLost() {
+        if isConnected() {
+            Log.append("Network lost - disconnecting VPN automatically", .warning, .mainApp)
+            // Clear connection timer
+            ConnectionDetailsCard.clearConnectionStartTime()
+            // Disconnect VPN
+            disconnect()
+        }
+    }
+    
+    /// Observe network status changes for enabling/disabling connect button
+    private func observeNetworkStatus() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNetworkStatusChanged(_:)),
+            name: .networkStatusChanged,
+            object: nil
+        )
+        
+        // Observe retry connection request
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleRetryConnection),
+            name: .retryConnection,
+            object: nil
+        )
+    }
+    
+    /// Handle retry connection request from alert
+    @objc private func handleRetryConnection() {
+        // Only retry if we have a selected server and network
+        guard selectedServer != nil, isNetworkAvailable else { return }
+        
+        // Small delay before retrying
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.connect()
+        }
+    }
+    
+    /// Handle network status change - update UI state
+    @objc private func handleNetworkStatusChanged(_ notification: Notification) {
+        if let isConnected = notification.userInfo?["isConnected"] as? Bool {
+            DispatchQueue.main.async { [weak self] in
+                self?.isNetworkAvailable = isConnected
+            }
+        }
+    }
+    
+    // MARK: - Connection Timeout Handling
+    
+    /// Start connection timeout timer
+    private func startConnectionTimeoutTimer() {
+        cancelConnectionTimeoutTimer()
+        
+        connectionTimeoutTimer = Timer.scheduledTimer(withTimeInterval: connectionTimeoutSeconds, repeats: false) { [weak self] _ in
+            self?.handleConnectionTimeout()
+        }
+    }
+    
+    /// Cancel connection timeout timer
+    private func cancelConnectionTimeoutTimer() {
+        connectionTimeoutTimer?.invalidate()
+        connectionTimeoutTimer = nil
+        timeoutCount = 0
+    }
+    
+    /// Monitor connection logs for timeout messages
+    private func startMonitoringConnectionLogs() {
+        // Observe log changes to detect server poll timeouts
+        connection.$output
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] logs in
+                self?.checkLogsForTimeout(logs)
+            }
+            .store(in: &cancellables)
+    }
+    
+    /// Check logs for timeout patterns
+    private func checkLogsForTimeout(_ logs: [Log]) {
+        guard isConnecting || isConnectionInProgress() else { return }
+        
+        // Get recent logs (last 10)
+        let recentLogs = logs.suffix(10)
+        
+        // Count timeout occurrences in recent logs
+        var recentTimeouts = 0
+        for log in recentLogs {
+            let text = log.text.lowercased()
+            if text.contains("server poll timeout") ||
+               text.contains("connection timeout") ||
+               text.contains("tls handshake failed") ||
+               text.contains("server_poll") ||
+               text.contains("inactivity timeout") {
+                recentTimeouts += 1
+            }
+        }
+        
+        // If we have multiple timeouts, trigger failure
+        if recentTimeouts >= maxTimeoutCount {
+            handleConnectionTimeout(reason: "Server not responding. Multiple connection attempts failed.")
+        }
+        
+        // Check for authentication errors
+        for log in recentLogs {
+            let text = log.text.lowercased()
+            if text.contains("auth_failed") || text.contains("authentication failed") {
+                handleConnectionTimeout(reason: "Authentication failed. Please check your credentials.")
+                return
+            }
+            if text.contains("certificate verify failed") || text.contains("cert_verify_fail") {
+                handleConnectionTimeout(reason: "Certificate verification failed.")
+                return
+            }
+            if text.contains("connection refused") {
+                handleConnectionTimeout(reason: "Connection refused by the server.")
+                return
+            }
+        }
+    }
+    
+    /// Handle connection timeout
+    private func handleConnectionTimeout(reason: String? = nil) {
+        guard isConnecting || isConnectionInProgress() else { return }
+        
+        let errorMessage = reason ?? "Connection timed out. The server is not responding."
+        
+        Log.append("Connection failed: \(errorMessage)", .error, .mainApp)
+        
+        // Stop the VPN attempt
+        disconnect()
+        
+        // Clear connection timer
+        ConnectionDetailsCard.clearConnectionStartTime()
+        
+        // Post notification to show alert
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .connectionFailed,
+                object: nil,
+                userInfo: ["reason": errorMessage]
+            )
+        }
     }
     
     /// Start pinging all servers to measure latency (disabled by default for memory optimization)
@@ -167,7 +344,13 @@ public class ServerListViewModel: ObservableObject {
         switch status {
         case .connecting, .reasserting:
             isConnecting = true
-        case .connected, .disconnected, .invalid, .disconnecting:
+        case .connected:
+            // Successfully connected - cancel timeout timer
+            cancelConnectionTimeoutTimer()
+            isConnecting = false
+        case .disconnected, .invalid, .disconnecting:
+            // Connection ended - cancel timeout timer
+            cancelConnectionTimeoutTimer()
             isConnecting = false
         @unknown default:
             isConnecting = false
@@ -222,12 +405,32 @@ public class ServerListViewModel: ObservableObject {
             return
         }
         
+        // Check network connectivity before connecting
+        guard NetworkMonitor.isCurrentlyConnected else {
+            Log.append("No internet connection - cannot connect to VPN", .error, .mainApp)
+            // Post notification to show no internet alert
+            NotificationCenter.default.post(name: .showNoInternetAlert, object: nil)
+            return
+        }
+        
+        // Reset timeout tracking
+        timeoutCount = 0
+        
         isConnecting = true
         connection.startVPN()
+        
+        // Start connection timeout timer
+        startConnectionTimeoutTimer()
+        
+        // Start monitoring logs for timeout messages
+        startMonitoringConnectionLogs()
     }
     
     /// Disconnect from current server
     func disconnect() {
+        // Cancel timeout timer
+        cancelConnectionTimeoutTimer()
+        
         connection.stopVPN()
         isConnecting = false
     }
