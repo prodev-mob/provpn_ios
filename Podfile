@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+platform :ios, '15.0'
 
 def shared_pods
   use_frameworks!
@@ -7,7 +7,7 @@ def shared_pods
 
 end
 
-target 'VPNClient' do
+target 'ProVPN' do
   shared_pods
 end
 

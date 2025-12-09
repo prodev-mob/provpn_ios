@@ -14,20 +14,20 @@ PODS:
   - OpenVPNAdapter/OpenVPNClient (0.7.0)
 
 DEPENDENCIES:
-  - OpenVPNAdapter (from `https://github.com/deneraraujo/OpenVPNAdapter.git`)
+  - OpenVPNAdapter (from `https://github.com/rahulsohaliya120/OpenVPNAdapter.git`)
 
 EXTERNAL SOURCES:
   OpenVPNAdapter:
-    :git: https://github.com/deneraraujo/OpenVPNAdapter.git
+    :git: https://github.com/rahulsohaliya120/OpenVPNAdapter.git
 
 CHECKOUT OPTIONS:
   OpenVPNAdapter:
     :commit: f4db4b0b160de0f2803de06ec95f8e703d9b0db5
-    :git: https://github.com/deneraraujo/OpenVPNAdapter.git
+    :git: https://github.com/rahulsohaliya120/OpenVPNAdapter.git
 
 SPEC CHECKSUMS:
   OpenVPNAdapter: 173fcc4c11a3a8a83ae8d250c079cdc5b9fb8ff1
 
-PODFILE CHECKSUM: cbf1b486b410bad86a2eb2ce0b7c48ee66044f64
+PODFILE CHECKSUM: 1dc7844975acc4b5d159e22fd63bd6e9d5a4eb03
 
 COCOAPODS: 1.16.2

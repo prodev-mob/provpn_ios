@@ -9,12 +9,12 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-TunnelProvider.xcscheme</key>
+		<key>Pods-ProVPN.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-VPNClient.xcscheme</key>
+		<key>Pods-TunnelProvider.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
