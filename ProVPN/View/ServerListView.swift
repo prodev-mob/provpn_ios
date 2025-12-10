@@ -96,6 +96,10 @@ struct ServerListView: View {
                         .frame(maxWidth: .infinity)
                         .animation(.spring(response: 0.6, dampingFraction: 0.8), value: viewModel.isConnected())
                     }
+                    .refreshable {
+                        // Pull to refresh - reload servers from API
+                        await viewModel.refreshServers()
+                    }
                     .onChange(of: viewModel.connection.connectionStatus) { newStatus in
                         handleConnectionStatusChange(newStatus, scrollProxy: scrollProxy)
                     }
@@ -1466,11 +1470,39 @@ struct DisconnectedStateView: View {
                     
                     Spacer()
                     
-                    Text("\(viewModel.filteredServers.count) servers")
-                        .font(isIPad ? .subheadline : .caption)
-                        .foregroundColor(.secondary)
+                    if viewModel.isLoadingServers {
+                        ProgressView()
+                            .scaleEffect(isIPad ? 0.8 : 0.7)
+                    } else {
+                        Text("\(viewModel.filteredServers.count) servers")
+                            .font(isIPad ? .subheadline : .caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 .padding(.horizontal, horizontalPadding)
+                
+                // Show error message if server loading failed
+                if let error = viewModel.serverLoadError {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                            .font(isIPad ? .body : .caption)
+                        Text(error)
+                            .font(isIPad ? .subheadline : .caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Button("Retry") {
+                            viewModel.fetchServersFromAPI()
+                        }
+                        .font(isIPad ? .subheadline : .caption)
+                        .foregroundColor(.cyan)
+                    }
+                    .padding(.horizontal, horizontalPadding)
+                    .padding(.vertical, isIPad ? 8 : 6)
+                    .background(Color.orange.opacity(0.1))
+                    .cornerRadius(8)
+                    .padding(.horizontal, horizontalPadding)
+                }
                 
                 if viewModel.filteredServers.isEmpty {
                     // No results view

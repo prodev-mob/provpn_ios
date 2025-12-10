@@ -19,6 +19,8 @@ public class ServerListViewModel: ObservableObject {
     @Published var serverPings: [String: Int?] = [:] // Server ID -> Ping in ms
     @Published var searchText: String = ""
     @Published var isNetworkAvailable: Bool = true // Track network availability
+    @Published var isLoadingServers: Bool = false // Track server loading state
+    @Published var serverLoadError: String? = nil // Track server loading errors
     
     // Connection timeout tracking
     private var connectionTimeoutTimer: Timer?
@@ -47,6 +49,7 @@ public class ServerListViewModel: ObservableObject {
         self.servers = VPNServerList.servers
         self.selectedServer = nil
         self.isConnecting = false
+        self.isLoadingServers = false
         
         // 2. Initialize profile + connection before using them
         let defaultProfile = Profile(profileName: "default", profileId: "default")
@@ -93,6 +96,9 @@ public class ServerListViewModel: ObservableObject {
         
         // Set initial network status
         isNetworkAvailable = NetworkMonitor.isCurrentlyConnected
+        
+        // Fetch servers from API
+        fetchServersFromAPI()
         
         // NOTE: Ping service disabled to reduce memory usage
         // Uncomment below to enable ping measurement
@@ -286,12 +292,28 @@ public class ServerListViewModel: ObservableObject {
     
     /// Ping a specific server
     func pingServer(_ server: VPNServer, completion: (() -> Void)? = nil) {
+        // Try to get cached config first, otherwise download
         guard let configData = server.loadConfigFile(),
               let configString = String(data: configData, encoding: .utf8) else {
-            serverPings[server.id] = nil
-            completion?()
+            // If no cached config, try async download
+            server.loadConfigFile { [weak self] configData in
+                guard let self = self,
+                      let configData = configData,
+                      let configString = String(data: configData, encoding: .utf8) else {
+                    self?.serverPings[server.id] = nil
+                    completion?()
+                    return
+                }
+                self.extractHostAndPing(server: server, configString: configString, completion: completion)
+            }
             return
         }
+        
+        extractHostAndPing(server: server, configString: configString, completion: completion)
+    }
+    
+    /// Extract host from config and ping
+    private func extractHostAndPing(server: VPNServer, configString: String, completion: (() -> Void)?) {
         
         // Extract remote host and port from config
         var host: String?
@@ -357,40 +379,135 @@ public class ServerListViewModel: ObservableObject {
         }
     }
     
+    /// Fetch servers from API
+    func fetchServersFromAPI() {
+        guard NetworkMonitor.isCurrentlyConnected else {
+            Log.append("No network connection - using fallback server list", .warning, .mainApp)
+            serverLoadError = "No internet connection. Using cached servers."
+            return
+        }
+        
+        isLoadingServers = true
+        serverLoadError = nil
+        
+        VPNServerAPIService.shared.fetchServers { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.isLoadingServers = false
+                
+                switch result {
+                case .success(let apiServers):
+                    if !apiServers.isEmpty {
+                        self.servers = apiServers
+                        Log.append("Loaded \(apiServers.count) servers from API", .info, .mainApp)
+                        
+                        // Update selected server if it exists in new list
+                        if let selectedId = self.selectedServer?.id,
+                           let updatedServer = apiServers.first(where: { $0.id == selectedId }) {
+                            self.selectedServer = updatedServer
+                        }
+                    } else {
+                        Log.append("API returned empty server list - using fallback", .warning, .mainApp)
+                        self.serverLoadError = "No servers available from API. Using cached servers."
+                    }
+                    
+                case .failure(let error):
+                    Log.append("Failed to fetch servers from API: \(error.localizedDescription)", .error, .mainApp)
+                    self.serverLoadError = "Failed to load servers. Using cached servers."
+                    // Keep using fallback servers from VPNServerList
+                }
+            }
+        }
+    }
+    
+    /// Refresh servers from API (async version for pull-to-refresh)
+    @MainActor
+    func refreshServers() async {
+        guard NetworkMonitor.isCurrentlyConnected else {
+            serverLoadError = "No internet connection. Using cached servers."
+            return
+        }
+        
+        isLoadingServers = true
+        serverLoadError = nil
+        
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            VPNServerAPIService.shared.fetchServers { [weak self] result in
+                guard let self = self else {
+                    continuation.resume()
+                    return
+                }
+                
+                Task { @MainActor in
+                    self.isLoadingServers = false
+                    
+                    switch result {
+                    case .success(let apiServers):
+                        if !apiServers.isEmpty {
+                            self.servers = apiServers
+                            Log.append("Refreshed \(apiServers.count) servers from API", .info, .mainApp)
+                            
+                            // Update selected server if it exists in new list
+                            if let selectedId = self.selectedServer?.id,
+                               let updatedServer = apiServers.first(where: { $0.id == selectedId }) {
+                                self.selectedServer = updatedServer
+                            }
+                            self.serverLoadError = nil
+                        } else {
+                            Log.append("API returned empty server list - using fallback", .warning, .mainApp)
+                            self.serverLoadError = "No servers available from API. Using cached servers."
+                        }
+                        
+                    case .failure(let error):
+                        Log.append("Failed to refresh servers from API: \(error.localizedDescription)", .error, .mainApp)
+                        self.serverLoadError = "Failed to refresh servers. Using cached servers."
+                    }
+                    
+                    continuation.resume()
+                }
+            }
+        }
+    }
+    
     /// Select a server and load its configuration
     func selectServer(_ server: VPNServer) {
         selectedServer = server
         
-        // Load config file
-        guard let configData = server.loadConfigFile() else {
-            Log.append("Failed to load config file for \(server.name)", .error, .mainApp)
-            return
+        // Load config file asynchronously from API
+        server.loadConfigFile { [weak self] configData in
+            guard let self = self, let configData = configData else {
+                Log.append("Failed to load config file for \(server.name)", .error, .mainApp)
+                return
+            }
+            
+            DispatchQueue.main.async {
+                // Update profile with server info
+                self.profile.profileName = "\(server.name) - \(server.country)"
+                self.profile.profileId = server.id
+                
+                // Set config file
+                self.connection.setConfigFile(configFile: configData)
+                
+                // Auto-set credentials if server has them defined (but keep anonymousAuth true for UI)
+                if let username = server.username, let password = server.password {
+                    self.profile.username = username
+                    self.profile.password = password
+                    // Set anonymousAuth to false internally so credentials are used, but UI will show it as true
+                    self.profile.anonymousAuth = false
+                    Log.append("Auto-set credentials for \(server.name)", .info, .mainApp)
+                } else {
+                    // Clear credentials for servers that don't need them
+                    self.profile.username = ""
+                    self.profile.password = ""
+                    self.profile.anonymousAuth = true
+                }
+                
+                // Save profile
+                Settings.saveProfile(profile: self.profile)
+                Settings.setSelectedProfile(profileId: server.id)
+            }
         }
-        
-        // Update profile with server info
-        profile.profileName = "\(server.name) - \(server.country)"
-        profile.profileId = server.id
-        
-        // Set config file
-        connection.setConfigFile(configFile: configData)
-        
-        // Auto-set credentials if server has them defined (but keep anonymousAuth true for UI)
-        if let username = server.username, let password = server.password {
-            profile.username = username
-            profile.password = password
-            // Set anonymousAuth to false internally so credentials are used, but UI will show it as true
-            profile.anonymousAuth = false
-            Log.append("Auto-set credentials for \(server.name)", .info, .mainApp)
-        } else {
-            // Clear credentials for servers that don't need them
-            profile.username = ""
-            profile.password = ""
-            profile.anonymousAuth = true
-        }
-        
-        // Save profile
-        Settings.saveProfile(profile: profile)
-        Settings.setSelectedProfile(profileId: server.id)
     }
     
     /// Connect to selected server
