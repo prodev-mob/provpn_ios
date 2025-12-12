@@ -218,18 +218,18 @@ struct ExtendedIPInfoCard: View {
                     IPDetailItem(icon: "clock", label: "Timezone", value: info.timezone ?? "N/A", isIPad: isIPad)
                 }
                 
-                Divider()
+//                Divider()
                 
                 // ISP Information
-                VStack(alignment: .leading, spacing: 8) {
-                    IPDetailRow(icon: "antenna.radiowaves.left.and.right", label: "ISP", value: info.isp ?? "N/A", isIPad: isIPad)
-                    if let org = info.org, org != info.isp {
-                        IPDetailRow(icon: "building", label: "Organization", value: org, isIPad: isIPad)
-                    }
-                    if let zip = info.zip, !zip.isEmpty {
-                        IPDetailRow(icon: "number", label: "Postal Code", value: zip, isIPad: isIPad)
-                    }
-                }
+//                VStack(alignment: .leading, spacing: 8) {
+//                    IPDetailRow(icon: "antenna.radiowaves.left.and.right", label: "ISP", value: info.isp ?? "N/A", isIPad: isIPad)
+//                    if let org = info.org, org != info.isp {
+//                        IPDetailRow(icon: "building", label: "Organization", value: org, isIPad: isIPad)
+//                    }
+//                    if let zip = info.zip, !zip.isEmpty {
+//                        IPDetailRow(icon: "number", label: "Postal Code", value: zip, isIPad: isIPad)
+//                    }
+//                }
             } else {
                 VStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle")
@@ -433,31 +433,31 @@ struct ConnectionDetailsCard: View {
             )
             
             // Server Details
-            if let server = viewModel.selectedServer {
-                VStack(alignment: .leading, spacing: isIPad ? 10 : 8) {
-                    HStack {
-                        Image(systemName: "server.rack")
-                            .font(isIPad ? .title3 : .body)
-                            .foregroundColor(.purple)
-                        Text("Server Details")
-                            .font(isIPad ? .headline : .subheadline)
-                            .fontWeight(.semibold)
-                        Spacer()
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        DetailRow(label: "Server", value: server.name, isIPad: isIPad)
-                        DetailRow(label: "Country", value: server.country, isIPad: isIPad)
-                        DetailRow(label: "Protocol", value: "OpenVPN", isIPad: isIPad)
-                        DetailRow(label: "Encryption", value: "AES-256-GCM", isIPad: isIPad)
-                    }
-                }
-                .padding(isIPad ? 16 : 12)
-                .background(
-                    RoundedRectangle(cornerRadius: isIPad ? 14 : 10)
-                        .fill(Color(UIColor.tertiarySystemGroupedBackground))
-                )
-            }
+//            if let server = viewModel.selectedServer {
+//                VStack(alignment: .leading, spacing: isIPad ? 10 : 8) {
+//                    HStack {
+//                        Image(systemName: "server.rack")
+//                            .font(isIPad ? .title3 : .body)
+//                            .foregroundColor(.purple)
+//                        Text("Server Details")
+//                            .font(isIPad ? .headline : .subheadline)
+//                            .fontWeight(.semibold)
+//                        Spacer()
+//                    }
+//                    
+//                    VStack(alignment: .leading, spacing: 4) {
+//                        DetailRow(label: "Server", value: server.name, isIPad: isIPad)
+//                        DetailRow(label: "Country", value: server.country, isIPad: isIPad)
+//                        DetailRow(label: "Protocol", value: "OpenVPN", isIPad: isIPad)
+//                        DetailRow(label: "Encryption", value: "AES-256-GCM", isIPad: isIPad)
+//                    }
+//                }
+//                .padding(isIPad ? 16 : 12)
+//                .background(
+//                    RoundedRectangle(cornerRadius: isIPad ? 14 : 10)
+//                        .fill(Color(UIColor.tertiarySystemGroupedBackground))
+//                )
+//            }
         }
         .padding(isIPad ? 24 : 16)
         .background(BlurCardBackground(cornerRadius: isIPad ? 20 : 16))

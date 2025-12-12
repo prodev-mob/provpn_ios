@@ -283,6 +283,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Choose Another Server action
         let chooseAction = UIAlertAction(title: "Choose Another Server", style: .default) { [weak self] _ in
             self?.isShowingAlert = false
+            // Post notification to reset connection state
+            NotificationCenter.default.post(name: .resetConnectionState, object: nil)
         }
         
         // Cancel action
@@ -304,4 +306,5 @@ extension Notification.Name {
     static let showNoInternetAlert = Notification.Name("showNoInternetAlert")
     static let connectionFailed = Notification.Name("connectionFailed")
     static let retryConnection = Notification.Name("retryConnection")
+    static let resetConnectionState = Notification.Name("resetConnectionState")
 }

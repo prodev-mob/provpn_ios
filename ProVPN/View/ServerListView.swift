@@ -12,6 +12,7 @@ import NetworkExtension
 struct ServerListView: View {
     @StateObject private var viewModel = ServerListViewModel()
     @State private var showSettings = false
+    @State private var showBrowser = false
     @State private var showConnectedCelebration = false
     @State private var showDisconnectingCelebration = false
     @State private var shouldShowDetailsView = false
@@ -79,7 +80,7 @@ struct ServerListView: View {
                                     ))
                             } else if shouldShowDetailsView && viewModel.isConnected() {
                                 // Connected: Show Connection Details with Speed Gauge
-                                ConnectedStateView(viewModel: viewModel, isIPad: isIPad, horizontalPadding: horizontalPadding)
+                                ConnectedStateView(viewModel: viewModel, isIPad: isIPad, horizontalPadding: horizontalPadding, showBrowser: $showBrowser)
                                     .transition(.asymmetric(
                                         insertion: .scale(scale: 0.9).combined(with: .opacity).animation(.spring(response: 0.5, dampingFraction: 0.8)),
                                         removal: .scale(scale: 0.9).combined(with: .opacity).animation(.easeOut(duration: 0.3))
@@ -131,21 +132,42 @@ struct ServerListView: View {
             .navigationBarTitleDisplayMode(isIPad ? .inline : .large)
             .toolbar(content: {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        showSettings = true
-                    }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "gearshape.fill")
-                            if isIPad {
-                                Text("Settings")
+                    HStack(spacing: isIPad ? 16 : 12) {
+                        // Browser Button
+                        Button(action: {
+                            showBrowser = true
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "safari.fill")
+                                if isIPad {
+                                    Text("Browser")
+                                }
                             }
+                            .foregroundColor(.cyan)
                         }
-                        .foregroundColor(.cyan)
+                        
+                        // Settings Button
+                        Button(action: {
+                            showSettings = true
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "gearshape.fill")
+                                if isIPad {
+                                    Text("Settings")
+                                }
+                            }
+                            .foregroundColor(.cyan)
+                        }
                     }
                 }
             })
             .sheet(isPresented: $showSettings) {
                 SettingsView(viewModel: viewModel, isIPad: isIPad)
+            }
+            .fullScreenCover(isPresented: $showBrowser) {
+                NavigationView {
+                    BrowserView(viewModel: viewModel)
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -1366,6 +1388,7 @@ struct ConnectedStateView: View {
     @ObservedObject var viewModel: ServerListViewModel
     var isIPad: Bool
     var horizontalPadding: CGFloat
+    @Binding var showBrowser: Bool
     
     @State private var appearAnimation = false
     
@@ -1379,33 +1402,63 @@ struct ConnectedStateView: View {
                 .scaleEffect(appearAnimation ? 1 : 0.95)
                 .opacity(appearAnimation ? 1 : 0)
             
-            // Disconnect Button with animation
-            Button(action: {
-                // Haptic feedback
-                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                impactFeedback.impactOccurred()
-                
-                // Clear the connection timer when user explicitly disconnects
-                ConnectionDetailsCard.clearConnectionStartTime()
-                viewModel.disconnect()
-            }) {
-                HStack(spacing: 10) {
-                    Image(systemName: "xmark.circle.fill")
-                    Text("Disconnect")
-                }
-                .font(isIPad ? .title3 : .headline)
-                .foregroundColor(.white)
-                .frame(maxWidth: isIPad ? 300 : .infinity)
-                .padding(.vertical, isIPad ? 18 : 16)
-                .background(
-                    LinearGradient(
-                        colors: [Color.red, Color.red.opacity(0.8)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+            // Action Buttons
+            HStack(spacing: isIPad ? 16 : 12) {
+                // Browser Button
+                Button(action: {
+                    // Haptic feedback
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
+                    showBrowser = true
+                }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "safari.fill")
+                        Text("Browse")
+                    }
+                    .font(isIPad ? .title3 : .headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, isIPad ? 18 : 16)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.cyan, Color.cyan.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
                     )
-                )
-                .cornerRadius(isIPad ? 16 : 12)
-                .shadow(color: Color.red.opacity(0.3), radius: 10, x: 0, y: 5)
+                    .cornerRadius(isIPad ? 16 : 12)
+                    .shadow(color: Color.cyan.opacity(0.3), radius: 10, x: 0, y: 5)
+                }
+                
+                // Disconnect Button
+                Button(action: {
+                    // Haptic feedback
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
+                    // Clear the connection timer when user explicitly disconnects
+                    ConnectionDetailsCard.clearConnectionStartTime()
+                    viewModel.disconnect()
+                }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "xmark.circle.fill")
+                        Text("Disconnect")
+                    }
+                    .font(isIPad ? .title3 : .headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, isIPad ? 18 : 16)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.red, Color.red.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .cornerRadius(isIPad ? 16 : 12)
+                    .shadow(color: Color.red.opacity(0.3), radius: 10, x: 0, y: 5)
+                }
             }
             .padding(.horizontal, horizontalPadding)
             .padding(.bottom, isIPad ? 40 : 30)
@@ -1474,9 +1527,9 @@ struct DisconnectedStateView: View {
                         ProgressView()
                             .scaleEffect(isIPad ? 0.8 : 0.7)
                     } else {
-                        Text("\(viewModel.filteredServers.count) servers")
-                            .font(isIPad ? .subheadline : .caption)
-                            .foregroundColor(.secondary)
+                    Text("\(viewModel.filteredServers.count) servers")
+                        .font(isIPad ? .subheadline : .caption)
+                        .foregroundColor(.secondary)
                     }
                 }
                 .padding(.horizontal, horizontalPadding)
