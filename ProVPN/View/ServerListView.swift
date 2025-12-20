@@ -1154,42 +1154,42 @@ struct SettingsView: View {
                     }
                 }
                 
-                Section(header: Text("DNS Settings").font(isIPad ? .headline : .subheadline)) {
-                    Toggle(isOn: $viewModel.profile.customDNSEnabled) {
-                        Text("Use Custom DNS")
-                            .font(isIPad ? .body : .callout)
-                    }
-                    .padding(.vertical, isIPad ? 4 : 0)
-                    
-                    if viewModel.profile.customDNSEnabled {
-                        ForEach(0..<viewModel.profile.dnsList.count, id: \.self) { index in
-                            TextField("DNS Address", text: Binding(
-                                get: {
-                                    index < viewModel.profile.dnsList.count ? viewModel.profile.dnsList[index] : ""
-                                },
-                                set: {
-                                    if index < viewModel.profile.dnsList.count {
-                                        viewModel.profile.dnsList[index] = $0
-                                    }
-                                }
-                            ))
-                            .font(isIPad ? .body : .callout)
-                            .padding(.vertical, isIPad ? 4 : 0)
-                        }
-                        
-                        Button(action: {
-                            viewModel.profile.dnsList.append("")
-                        }) {
-                            HStack {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(isIPad ? .title3 : .body)
-                                Text("Add DNS Server")
-                                    .font(isIPad ? .body : .callout)
-                            }
-                        }
-                        .padding(.vertical, isIPad ? 4 : 0)
-                    }
-                }
+//                Section(header: Text("DNS Settings").font(isIPad ? .headline : .subheadline)) {
+//                    Toggle(isOn: $viewModel.profile.customDNSEnabled) {
+//                        Text("Use Custom DNS")
+//                            .font(isIPad ? .body : .callout)
+//                    }
+//                    .padding(.vertical, isIPad ? 4 : 0)
+//                    
+//                    if viewModel.profile.customDNSEnabled {
+//                        ForEach(0..<viewModel.profile.dnsList.count, id: \.self) { index in
+//                            TextField("DNS Address", text: Binding(
+//                                get: {
+//                                    index < viewModel.profile.dnsList.count ? viewModel.profile.dnsList[index] : ""
+//                                },
+//                                set: {
+//                                    if index < viewModel.profile.dnsList.count {
+//                                        viewModel.profile.dnsList[index] = $0
+//                                    }
+//                                }
+//                            ))
+//                            .font(isIPad ? .body : .callout)
+//                            .padding(.vertical, isIPad ? 4 : 0)
+//                        }
+//                        
+//                        Button(action: {
+//                            viewModel.profile.dnsList.append("")
+//                        }) {
+//                            HStack {
+//                                Image(systemName: "plus.circle.fill")
+//                                    .font(isIPad ? .title3 : .body)
+//                                Text("Add DNS Server")
+//                                    .font(isIPad ? .body : .callout)
+//                            }
+//                        }
+//                        .padding(.vertical, isIPad ? 4 : 0)
+//                    }
+//                }
                 
                 // Connection Logs - Only visible in Developer Mode
                 if isDeveloperMode {
