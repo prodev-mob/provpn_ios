@@ -9,6 +9,6 @@ import Foundation
 
 /// Environments variables
 public struct Config {
-    public static let appGroupName = "group.com.prodev.app.VPN"
-    public static let packetTunnelProviderBundleId = "com.prodev.app.VPN.VPNPacketTunnel"
+    public static let appGroupName = "group.com.prodev.ProVPN"
+    public static let packetTunnelProviderBundleId = "com.prodev.ProVPN.tunnel"
 }
