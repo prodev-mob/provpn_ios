@@ -477,7 +477,7 @@ struct ConnectedCelebrationView: View {
             }
         }
         .padding(isIPad ? 50 : (isSmallScreen ? 24 : 40))
-        .frame(maxWidth: isIPad ? 600 : .infinity)
+        .frame(maxWidth: isIPad ? 600 : 370)
         .background(BlurCardBackground(cornerRadius: isIPad ? 32 : (isSmallScreen ? 20 : 28)))
         .shadow(color: Color.green.opacity(0.25), radius: isSmallScreen ? 15 : 30, x: 0, y: isSmallScreen ? 8 : 15)
         .padding(.horizontal, isIPad ? 40 : 16)
@@ -563,7 +563,7 @@ struct DisconnectingCelebrationView: View {
             )
         }
         .padding(isIPad ? 50 : (isSmallScreen ? 24 : 40))
-        .frame(maxWidth: isIPad ? 600 : .infinity)
+        .frame(maxWidth: isIPad ? 600 : 370)
         .background(BlurCardBackground(cornerRadius: isIPad ? 32 : (isSmallScreen ? 20 : 28)))
         .shadow(color: Color.orange.opacity(0.25), radius: isSmallScreen ? 15 : 30, x: 0, y: isSmallScreen ? 8 : 15)
         .padding(.horizontal, isIPad ? 40 : 16)
