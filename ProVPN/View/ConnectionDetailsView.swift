@@ -92,7 +92,7 @@ struct IPLocationMapView: View {
     var body: some View {
         VStack(spacing: 0) {
             if let coord = coordinate {
-                Map(coordinateRegion: $region, annotationItems: [MapPin(coordinate: coord)]) { pin in
+                Map(coordinateRegion: $region, interactionModes: [], annotationItems: [MapPin(coordinate: coord)]) { pin in
                     MapAnnotation(coordinate: pin.coordinate) {
                         VStack(spacing: 0) {
                             Image(systemName: "mappin.circle.fill")
