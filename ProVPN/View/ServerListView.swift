@@ -1124,6 +1124,7 @@ struct SettingsView: View {
     @State private var developerTapCount = 0
     @State private var isDeveloperMode = Settings.isDeveloperModeEnabled
     @State private var showDeveloperModeAlert = false
+    @State private var showPrivacyPolicy = false
     
     private var logHeight: CGFloat { isIPad ? 400 : 300 }
     private var logFontSize: CGFloat { isIPad ? 13 : 11 }
@@ -1245,6 +1246,24 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, isIPad ? 4 : 0)
                 }
+                
+                // Legal Section
+                Section(header: Text("Legal").font(isIPad ? .headline : .subheadline)) {
+                    Button(action: {
+                        showPrivacyPolicy = true
+                    }) {
+                        HStack {
+                            Text("Privacy Policy")
+                                .font(isIPad ? .body : .callout)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                                .font(isIPad ? .body : .callout)
+                        }
+                    }
+                    .padding(.vertical, isIPad ? 4 : 0)
+                }
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -1272,6 +1291,11 @@ struct SettingsView: View {
                     message: Text(isDeveloperMode ? "Connection logs are now visible." : "Connection logs are now hidden."),
                     dismissButton: .default(Text("OK"))
                 )
+            }
+            .fullScreenCover(isPresented: $showPrivacyPolicy) {
+                NavigationView {
+                    PrivacyPolicyBrowserView(viewModel: viewModel)
+                }
             }
         }
         .frame(minWidth: isIPad ? 540 : nil, minHeight: isIPad ? 600 : nil)
@@ -1323,6 +1347,144 @@ struct SettingsView: View {
             return .orange
         case .error, .critical, .alert, .emergency:
             return .red
+        }
+    }
+}
+
+/// Privacy Policy Browser View
+struct PrivacyPolicyBrowserView: View {
+    @ObservedObject var viewModel: ServerListViewModel
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
+    @State private var urlString: String = "https://vpn.ethansolution.com/term-condition.html"
+    @State private var isLoading: Bool = false
+    @State private var canGoBack: Bool = false
+    @State private var canGoForward: Bool = false
+    @State private var currentURL: String?
+    @State private var pageTitle: String?
+    @State private var shouldLoadURL: Bool = false
+    @State private var showShareSheet: Bool = false
+    @State private var shareURL: URL?
+    @FocusState private var isAddressBarFocused: Bool
+    
+    @StateObject private var webViewStore = WebViewStore()
+    
+    private var isIPad: Bool {
+        horizontalSizeClass == .regular
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // VPN Status Bar
+            if viewModel.isConnected() {
+                VPNStatusBanner(viewModel: viewModel, isIPad: isIPad)
+            }
+            
+            // Address Bar
+            AddressBarView(
+                urlString: $urlString,
+                isLoading: isLoading,
+                isAddressBarFocused: $isAddressBarFocused,
+                onGo: {
+                    loadURL()
+                },
+                onRefresh: {
+                    webViewStore.coordinator?.reload()
+                },
+                onStop: {
+                    webViewStore.coordinator?.stopLoading()
+                },
+                isIPad: isIPad
+            )
+            
+            // Web View
+            WebView(
+                urlString: $urlString,
+                isLoading: $isLoading,
+                canGoBack: $canGoBack,
+                canGoForward: $canGoForward,
+                currentURL: $currentURL,
+                pageTitle: $pageTitle,
+                webView: webViewStore.webView,
+                shouldLoadURL: shouldLoadURL,
+                coordinatorStore: webViewStore
+            )
+            .onAppear {
+                // Load privacy policy URL
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    shouldLoadURL = true
+                }
+            }
+            .onChange(of: currentURL) { newURL in
+                // Update address bar when URL changes from navigation (but not when user is typing)
+                // Only update if it's different and user is not actively editing
+                if let newURL = newURL, !isAddressBarFocused {
+                    // Only update if significantly different (avoid minor changes)
+                    if newURL != urlString && !newURL.isEmpty {
+                        urlString = newURL
+                    }
+                }
+            }
+            
+            // Toolbar
+            BrowserToolbar(
+                canGoBack: canGoBack,
+                canGoForward: canGoForward,
+                onBack: {
+                    if webViewStore.webView.canGoBack {
+                        webViewStore.webView.goBack()
+                    }
+                },
+                onForward: {
+                    if webViewStore.webView.canGoForward {
+                        webViewStore.webView.goForward()
+                    }
+                },
+                onShare: {
+                    if let url = currentURL, let shareURL = URL(string: url) {
+                        self.shareURL = shareURL
+                        showShareSheet = true
+                    }
+                },
+                onBookmarks: {
+                    // No-op for privacy policy view
+                },
+                onHome: {
+                    let homeURL = "https://vpn.ethansolution.com/term-condition.html"
+                    urlString = homeURL
+                    webViewStore.coordinator?.loadURL(homeURL, force: true)
+                },
+                isIPad: isIPad
+            )
+        }
+        .navigationTitle(pageTitle ?? "Privacy Policy")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Done") {
+                    dismiss()
+                }
+                .foregroundColor(.cyan)
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let shareURL = shareURL {
+                ShareSheet(activityItems: [shareURL])
+            }
+        }
+    }
+    
+    private func loadURL() {
+        isAddressBarFocused = false
+        
+        // Set flag to trigger load, then immediately reset it
+        // This ensures updateUIView only processes it once
+        shouldLoadURL = true
+        
+        // Reset flag immediately after SwiftUI processes the update
+        DispatchQueue.main.async {
+            self.shouldLoadURL = false
         }
     }
 }
